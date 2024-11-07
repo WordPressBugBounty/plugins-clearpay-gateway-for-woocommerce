@@ -5,14 +5,13 @@
 
 $get_clearpay_assets = function ( $country ) {
 
-	$global_assets = array(
-		'cart_page_express_button' => '<tr><td colspan="2" class="btn-clearpay_express_td"><button id="clearpay_express_button" class="btn-clearpay_express btn-clearpay_express_cart" type="button" disabled><img src="https://static.afterpay.com/button/checkout-with-clearpay/[THEME].svg" alt="Checkout with Clearpay" /></button></td></tr>',
-	);
+	$global_assets = array();
 
 	$assets = array(
 		'GB' => array(
-			'help_center_url' => 'https://help.clearpay.co.uk/hc/en-gb/requests/new',
-			'retailer_url'    => 'https://www.clearpay.co.uk/en-GB/for-retailers',
+			'help_center_url'          => 'https://help.clearpay.co.uk/hc/en-gb/requests/new',
+			'retailer_url'             => 'https://www.clearpay.co.uk/en-GB/for-retailers',
+			'cart_page_express_button' => '<button id="clearpay_express_button" class="btn-clearpay_express btn-clearpay_express_cart [THEME]" type="button" disabled>Checkout with <img src="https://static.afterpay.com/en-GB/integration/logo/lockup/color-[LOGO_COLOR]-32.svg" alt="Clearpay" /></button>',
 		),
 	);
 

@@ -4,12 +4,12 @@
  * Description: Provide Clearpay as a payment option for WooCommerce orders.
  * Author: Clearpay
  * Author URI: https://www.clearpay.co.uk/
- * Version: 3.8.6
+ * Version: 3.8.7
  * Text Domain: clearpay-gateway-for-woocommerce
- * Requires PHP: 5.6
+ * Requires PHP: 7.4
  * Requires Plugins: woocommerce
- * WC requires at least: 3.2.6
- * WC tested up to: 9.1.2
+ * WC requires at least: 7.4.1
+ * WC tested up to: 9.3.3
  *
  * Copyright: (c) 2021 Clearpay
  *
@@ -51,7 +51,7 @@ if ( ! class_exists( 'Clearpay_Plugin' ) ) {
 		 *
 		 * @var string
 		 */
-		public static $version = '3.8.6';
+		public static $version = '3.8.7';
 
 		/**
 		 * Import required classes.
@@ -90,7 +90,8 @@ if ( ! class_exists( 'Clearpay_Plugin' ) ) {
 			add_action( "woocommerce_update_options_payment_gateways_{$gateway->id}", array( $gateway, 'process_admin_options' ), 10, 0 ); // process_admin_options() is defined in WC_Gateway_Clearpay's grandparent class: WC_Settings_API.
 			add_action( "woocommerce_update_options_payment_gateways_{$gateway->id}", array( $gateway, 'refresh_cached_configuration' ), 11, 0 ); // Refresh cached configuration after our gateway settings are saved, but before the cron jobs run.
 			add_action( "woocommerce_update_options_payment_gateways_{$gateway->id}", array( 'Clearpay_Plugin_Cron', 'fire_jobs' ), 12, 0 ); // Manually fire the cron jobs after our gateway settings are saved, and after cached configuration is refreshed.
-			add_action( 'woocommerce_cart_totals_after_order_total', array( $gateway, 'render_cart_page_elements' ), 10, 0 );
+			add_action( 'woocommerce_cart_totals_after_order_total', array( $gateway, 'render_schedule_on_cart_page' ), 10, 0 );
+			add_action( 'woocommerce_proceed_to_checkout', array( $gateway, 'render_express_checkout_on_cart_page' ), 20, 0 );
 			add_action( 'woocommerce_order_status_changed', array( $gateway, 'collect_shipping_data' ), 10, 3 );
 			add_action( 'wp_enqueue_scripts', array( $this, 'init_website_assets' ), 10, 0 );
 			add_action( 'wp_ajax_clearpay_action', array( $gateway, 'reset_settings_api_form_fields' ), 10, 0 );
@@ -253,6 +254,7 @@ if ( ! class_exists( 'Clearpay_Plugin' ) ) {
 						'currency'                   => get_woocommerce_currency(),
 						'max'                        => $instance->getOrderLimitMax(),
 						'multicurrency_is_available' => $instance->feature_is_available( 'multicurrency' ),
+						'caa_is_available'           => $instance->feature_is_available( 'caa' ),
 					)
 				);
 			}

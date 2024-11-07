@@ -1,9 +1,9 @@
 === Clearpay Gateway for WooCommerce ===
 Contributors: clearpayit
 Tags: woocommerce, clearpay
-Requires at least: 4.8.3
-Tested up to: 6.5.5
-Stable tag: 3.8.6
+Requires at least: 6.0.3
+Tested up to: 6.6.2
+Stable tag: 3.8.7
 License: GNU Public License
 License URI: https://www.gnu.org/licenses/
 
@@ -11,7 +11,7 @@ Provide Clearpay as a payment option for WooCommerce orders.
 
 == Description ==
 
-Give your customers the option to buy now and pay later with Clearpay. The "Clearpay Gateway for WooCommerce" plugin provides the option to choose Clearpay as the payment method at the checkout. It also provides the functionality to display the Clearpay logo and instalment calculations below product prices on category pages, individual product pages, and on the cart page. For each payment that is approved by Clearpay, an order will be created inside the WooCommerce system like any other order. Automatic refunds are also supported.
+Give your customers the option to buy now and pay later with Clearpay. The "Clearpay Gateway for WooCommerce" plugin provides the option to choose Clearpay as the payment method at the checkout. It also provides the functionality to display the Clearpay logo and instalment calculations below product prices on category pages, individual product pages, and on the cart page. When checking out with Clearpay, WooCommerce will create a pending order. The user will be redirected to Clearpay to confirm payment for their order. Automatic refunds are also supported.
 
 == Installation ==
 
@@ -38,6 +38,14 @@ This section outlines the steps to install the Clearpay plugin.
 Please refer to the [User Guide](https://developers.clearpay.co.uk/clearpay-online/docs/woocommerce-pre-integration-checks). Most common questions are answered in the [FAQ](https://developers.clearpay.co.uk/clearpay-online/docs/woocommerce-frequently-asked-questions). There is also the option to create a support ticket in the official [Clearpay Help Centre](https://help.clearpay.co.uk/hc) if necessary.
 
 == Changelog ==
+
+= 3.8.7 =
+*Release Date: Thursday, 07 Nov 2024*
+
+* Raised minimum system requirements.
+* Revised placements on cart page and checkout page.
+* Minor improvements.
+* Tested and verified support for WordPress 6.6.2 and WooCommerce 9.3.3.
 
 = 3.8.6 =
 *Release Date: Monday, 22 Jul 2024*

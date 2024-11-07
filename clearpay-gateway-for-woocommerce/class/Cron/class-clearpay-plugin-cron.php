@@ -130,8 +130,8 @@ class Clearpay_Plugin_Cron {
 			} else {
 				$old_min = $settings['pay-over-time-limit-min'];
 				$old_max = $settings['pay-over-time-limit-max'];
-				$new_min = property_exists( $configuration, 'minimumAmount' ) ? $configuration->minimumAmount->amount : '0.00';
-				$new_max = property_exists( $configuration, 'maximumAmount' ) ? $configuration->maximumAmount->amount : '0.00';
+				$new_min = $configuration->minimumAmount->amount ?? '0.00';
+				$new_max = $configuration->maximumAmount->amount ?? '0.00';
 				if ( $new_min !== $old_min ) {
 					$settings_changed = true;
 					$gateway::log( "Cron changing payment limit MIN from '{$old_min}' to '{$new_min}'." );
@@ -143,7 +143,7 @@ class Clearpay_Plugin_Cron {
 					$settings['pay-over-time-limit-max'] = $new_max;
 				}
 
-				$old_currency = isset( $settings['settlement-currency'] ) ? $settings['settlement-currency'] : '';
+				$old_currency = $settings['settlement-currency'] ?? '';
 				$new_currency = $configuration->maximumAmount->currency;
 				if ( $new_currency !== $old_currency ) {
 					$settings_changed = true;
@@ -151,19 +151,19 @@ class Clearpay_Plugin_Cron {
 					$settings['settlement-currency'] = $new_currency;
 				}
 
-				$old_country = isset( $settings['trading-country'] ) ? $settings['trading-country'] : '';
-				$new_country = property_exists( $configuration, 'merchantCountry' ) ? $configuration->merchantCountry : '';
+				$old_country = $settings['trading-country'] ?? '';
+				$new_country = $configuration->merchantCountry ?? '';
 				if ( $new_country !== $old_country ) {
 					$settings_changed = true;
 					$gateway::log( "Cron changing merchant country from '{$old_country}' to '{$new_country}'." );
 					$settings['trading-country'] = $new_country;
 				}
 
-				$old_cbt    = isset( $settings['cbt-countries'] ) ? $settings['cbt-countries'] : '';
-				$old_limits = isset( $settings['cbt-limits'] ) ? $settings['cbt-limits'] : '';
+				$old_cbt    = $settings['cbt-countries'] ?? '';
+				$old_limits = $settings['cbt-limits'] ?? '';
 				$new_cbt    = 'N/A';
 				$new_limits = 'N/A';
-				if ( property_exists( $configuration, 'CBT' ) && $configuration->CBT->enabled ) {
+				if ( $configuration->CBT->enabled ?? false ) {
 					if ( is_array( $configuration->CBT->countries ) ) {
 						sort( $configuration->CBT->countries );
 						$new_cbt = implode( '|', $configuration->CBT->countries );
@@ -172,9 +172,9 @@ class Clearpay_Plugin_Cron {
 						$limits_array = array();
 						foreach ( $configuration->CBT->limits as $currency => $data ) {
 							$limits_array[ $currency ] = array(
-								'rate' => property_exists( $data, 'exchangeRate' ) ? $data->exchangeRate : 'N/A',
-								'min'  => property_exists( $data, 'minimumAmount' ) ? $data->minimumAmount->amount : '0.00',
-								'max'  => property_exists( $data, 'maximumAmount' ) ? $data->maximumAmount->amount : '0.00',
+								'rate' => $data->exchangeRate ?? 'N/A',
+								'min'  => $data->minimumAmount->amount ?? '0.00',
+								'max'  => $data->maximumAmount->amount ?? '0.00',
 							);
 						}
 						ksort( $limits_array );
@@ -195,14 +195,14 @@ class Clearpay_Plugin_Cron {
 				if ( property_exists( $configuration, 'publicId' ) ) {
 					$new_mpid = $configuration->publicId;
 					if ( $settings['testmode'] === 'production' ) {
-						$old_mpid = isset( $settings['prod-mpid'] ) ? $settings['prod-mpid'] : '';
+						$old_mpid = $settings['prod-mpid'] ?? '';
 						if ( $new_mpid !== $old_mpid ) {
 							$settings_changed = true;
 							$gateway::log( "Cron changing production MPID from '{$old_mpid}' to '{$new_mpid}'." );
 							$settings['prod-mpid'] = $new_mpid;
 						}
 					} elseif ( $settings['testmode'] === 'sandbox' ) {
-						$old_mpid = isset( $settings['test-mpid'] ) ? $settings['test-mpid'] : '';
+						$old_mpid = $settings['test-mpid'] ?? '';
 						if ( $new_mpid !== $old_mpid ) {
 							$settings_changed = true;
 							$gateway::log( "Cron changing sandbox MPID from '{$old_mpid}' to '{$new_mpid}'." );
@@ -213,7 +213,7 @@ class Clearpay_Plugin_Cron {
 			}
 		}
 
-		$old_ei_configs = isset( $settings['ei-configs'] ) ? $settings['ei-configs'] : '';
+		$old_ei_configs = $settings['ei-configs'] ?? '';
 		$new_ei_configs = $gateway->get_ei_configs();
 		if ( $old_ei_configs !== $new_ei_configs ) {
 			$settings_changed       = true;

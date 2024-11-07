@@ -464,7 +464,7 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 					<p>
 						<strong><?php _e( "Clearpay API Error #{$error->code}:", 'woo_clearpay' ); ?></strong>
 						<?php _e( "{$error->message}", 'woo_clearpay' ); ?>
-						<?php if ( property_exists( $error, 'id' ) && $error->id ) : ?>
+						<?php if ( $error->id ?? false ) : ?>
 							<em><?php _e( "(Error ID: {$error->id})", 'woo_clearpay' ); ?></em>
 						<?php endif; ?>
 						<?php if ( $show_link ) : ?>
@@ -762,8 +762,7 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 		 *
 		 * @todo: update the name of this function to better match behaviour
 		 *
-		 * @used-by self::render_cart_page_elements()
-		 * @used-by self::is_available()
+		 * @used-by self::frontend_is_ready()
 		 *
 		 * @return Boolean
 		 */
@@ -878,8 +877,7 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 		/**
 		 * Checks that the API is still available by checking against settings
 		 *
-		 * @used-by self::render_cart_page_elements()
-		 * @used-by self::is_available()
+		 * @used-by self::frontend_is_ready()
 		 *
 		 * @return Boolean
 		 */
@@ -889,46 +887,23 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 		}
 
 		/**
-		 * Calls functions that render Clearpay elements on Cart page
-		 *      - logo
-		 *      - payment schedule
-		 *      - express button.
+		 * Render Clearpay elements (logo and payment schedule) on Cart page.
 		 *
 		 * This is dependant on all of the following criteria being met:
 		 *      - The currency is supported
 		 *      - The Clearpay Payment Gateway is enabled.
-		 *      - The cart total is valid and within the merchant payment limits.
-		 *      - All of the items in the cart are considered eligible to be purchased with Clearpay.
+		 *      - The cart total is positive.
+		 *      - The "Payment Info on Cart Page" box is ticked and there is a message to display.
 		 *
 		 * Note:    Hooked onto the "woocommerce_cart_totals_after_order_total" Action.
 		 *
-		 * @since   3.1.0
-		 * @see     Clearpay_Plugin::__construct()                              For hook attachment.
-		 * @uses    self::frontend_is_ready()
-		 * @uses    self::cart_total_is_positive()
-		 * @uses    self::render_schedule_on_cart_page()
-		 */
-		public function render_cart_page_elements() {
-			if ( $this->frontend_is_ready()
-				&& $this->cart_total_is_positive()
-			) {
-				$this->render_schedule_on_cart_page();
-				$this->render_express_checkout_on_cart_page();
-			}
-		}
-
-		/**
-		 * Render Clearpay elements (logo and payment schedule) on Cart page.
-		 *
-		 * This is dependant on the following criteria being met:
-		 *      - The "Payment Info on Cart Page" box is ticked and there is a message to display.
-		 *
 		 * @since   2.0.0
 		 * @uses    self::render_placement()
-		 * @used-by self::render_cart_page_elements()
 		 */
 		public function render_schedule_on_cart_page() {
-			if ( isset( $this->settings['show-info-on-cart-page'] )
+			if ( $this->frontend_is_ready()
+				&& $this->cart_total_is_positive()
+				&& isset( $this->settings['show-info-on-cart-page'] )
 				&& $this->settings['show-info-on-cart-page'] === 'yes'
 			) {
 				echo '<tr><td colspan="2">';
@@ -954,14 +929,20 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 		/**
 		 * Render the express checkout elements on Cart page.
 		 *
-		 * This is dependant on the following criteria being met:
+		 * This is dependant on all of the following criteria being met:
+		 *      - The currency is supported
+		 *      - The Clearpay Payment Gateway is enabled.
+		 *      - The cart total is valid and within the merchant payment limits.
+		 *      - All of the items in the cart are considered eligible to be purchased with Clearpay.
 		 *      - The "Show express on cart page" box is ticked.
 		 *
+		 * Note:    Hooked onto the "woocommerce_after_cart_totals" Action.
+		 *
 		 * @since   3.1.0
-		 * @used-by self::render_cart_page_elements()
 		 */
 		public function render_express_checkout_on_cart_page() {
 			if (
+				! $this->frontend_is_ready() ||
 				! $this->express_is_enabled() ||
 				! $this->cart_is_within_limits() ||
 				! $this->cart_products_are_supported() ||
@@ -973,16 +954,21 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 			wp_enqueue_style( 'clearpay_css' );
 			wp_enqueue_script( 'clearpay_express' );
 
-			$button_html = str_replace( '[THEME]', $this->settings['express-button-theme'], $this->assets['cart_page_express_button'] );
+			$logo_color = $this->settings['express-button-theme'] == 'black-on-mint' ? 'black' : 'white';
+			if ( $this->feature_is_available( 'caa' ) ) {
+				$replacements = array( 'white-on-black', 'white' );
+			} else {
+				$replacements = array( $this->settings['express-button-theme'], $logo_color );
+			}
+			$button_html = str_replace(
+				array( '[THEME]', '[LOGO_COLOR]' ),
+				$replacements,
+				$this->assets['cart_page_express_button']
+			);
 
 			echo wp_kses(
 				$button_html,
 				array(
-					'tr'     => true,
-					'td'     => array(
-						'colspan' => true,
-						'class'   => true,
-					),
 					'button' => array(
 						'id'       => true,
 						'class'    => true,
@@ -1007,7 +993,17 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 		}
 
 		public function get_express_checkout_button_for_block() {
-			$button_html = str_replace( '[THEME]', $this->settings['express-button-theme'], $this->assets['cart_page_express_button'] );
+			$logo_color = $this->settings['express-button-theme'] == 'black-on-mint' ? 'black' : 'white';
+			if ( $this->feature_is_available( 'caa' ) ) {
+				$replacements = array( 'white-on-black', 'white' );
+			} else {
+				$replacements = array( $this->settings['express-button-theme'], $logo_color );
+			}
+			$button_html = str_replace(
+				array( '[THEME]', '[LOGO_COLOR]' ),
+				$replacements,
+				$this->assets['cart_page_express_button']
+			);
 
 			return wp_kses(
 				$button_html,
@@ -1265,25 +1261,22 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 						$order->payment_complete( $payment->id );
 						$order->update_meta_data( '_transaction_url', $payment->merchantPortalOrderUrl );
 						$order->save();
-						if ( wp_safe_redirect( $this->get_return_url( $order ) ) ) {
-							exit;
-						}
+						wp_safe_redirect( $this->get_return_url( $order ) );
+						exit;
 					} else {
 						$order->add_order_note( sprintf( __( 'Payment declined. Clearpay Order ID: %s.', 'woo_clearpay' ), $payment->id ) );
 						$order->update_status( 'failed' );
 						wc_add_notice( sprintf( __( 'Your payment was declined for Clearpay Order #%1$s. Please try again. For more information, please submit a request via <a href="%2$s" style="text-decoration: underline;">Clearpay Help Center.</a>', 'woo_clearpay' ), $payment->id, $this->assets['help_center_url'] ), 'error' );
-						if ( wp_safe_redirect( $order->get_checkout_payment_url() ) ) {
-							exit;
-						}
+						wp_safe_redirect( $order->get_checkout_payment_url() );
+						exit;
 					}
 				} else {
 					self::log( "Updating status of WooCommerce Order #{$order_number} to \"Failed\", because payment failed." );
 					$order->add_order_note( __( 'Clearpay payment failed.', 'woo_clearpay' ) );
 					$order->update_status( 'failed' );
 					wc_add_notice( __( 'Payment failed. Please try again.', 'woo_clearpay' ), 'error' );
-					if ( wp_safe_redirect( $order->get_checkout_payment_url() ) ) {
-						exit;
-					}
+					wp_safe_redirect( $order->get_checkout_payment_url() );
+					exit;
 				}
 			}
 			wp_die( 'Invalid request to Clearpay callback', 'Clearpay', array( 'response' => 500 ) );
@@ -1902,10 +1895,6 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 			} catch ( Throwable $e ) {
 				wc_add_notice( __( 'Your order couldn\'t be created. Please try again.', 'woo_clearpay' ), 'error' );
 				throw new Exception( "Woocommerce couldn't create the order: {$e->getMessage()}", 3 );
-			} catch ( Exception $e ) {
-				// Backward compatibility for PHP 5.
-				wc_add_notice( __( 'Your order couldn\'t be created. Please try again.', 'woo_clearpay' ), 'error' );
-				throw new Exception( "(Exception) Woocommerce couldn't create the order: {$e->getMessage()}", 3 );
 			}
 
 			$order->save();
