@@ -11,7 +11,7 @@ $get_clearpay_assets = function ( $country ) {
 		'GB' => array(
 			'help_center_url'          => 'https://help.clearpay.co.uk/hc/en-gb/requests/new',
 			'retailer_url'             => 'https://www.clearpay.co.uk/en-GB/for-retailers',
-			'cart_page_express_button' => '<button id="clearpay_express_button" class="btn-clearpay_express btn-clearpay_express_cart [THEME]" type="button" disabled>Checkout with <img src="https://static.afterpay.com/en-GB/integration/logo/lockup/color-[LOGO_COLOR]-32.svg" alt="Clearpay" /></button>',
+			'cart_page_express_button' => '<button id="clearpay_express_button" class="btn-clearpay_express btn-clearpay_express_cart [THEME]" type="button" disabled>Checkout with <img src="[STATIC_URL]en-GB/integration/logo/lockup/color-[LOGO_COLOR]-32.svg" alt="Clearpay" /></button>',
 		),
 	);
 

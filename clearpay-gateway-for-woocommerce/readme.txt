@@ -2,8 +2,8 @@
 Contributors: clearpayit
 Tags: woocommerce, clearpay
 Requires at least: 6.0.3
-Tested up to: 6.6.2
-Stable tag: 3.8.7
+Tested up to: 6.7.2
+Stable tag: 3.8.8
 License: GNU Public License
 License URI: https://www.gnu.org/licenses/
 
@@ -38,6 +38,12 @@ This section outlines the steps to install the Clearpay plugin.
 Please refer to the [User Guide](https://developers.clearpay.co.uk/clearpay-online/docs/woocommerce-pre-integration-checks). Most common questions are answered in the [FAQ](https://developers.clearpay.co.uk/clearpay-online/docs/woocommerce-frequently-asked-questions). There is also the option to create a support ticket in the official [Clearpay Help Centre](https://help.clearpay.co.uk/hc) if necessary.
 
 == Changelog ==
+
+= 3.8.8 =
+*Release Date: Monday, 17 Mar 2025*
+
+* Minor improvements.
+* Tested and verified support for WordPress 6.7.2 and WooCommerce 9.7.1.
 
 = 3.8.7 =
 *Release Date: Thursday, 07 Nov 2024*

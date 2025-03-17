@@ -954,14 +954,15 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 			wp_enqueue_style( 'clearpay_css' );
 			wp_enqueue_script( 'clearpay_express' );
 
+			$static_url = $this->get_static_url();
 			$logo_color = $this->settings['express-button-theme'] == 'black-on-mint' ? 'black' : 'white';
 			if ( $this->feature_is_available( 'caa' ) ) {
-				$replacements = array( 'white-on-black', 'white' );
+				$replacements = array( 'white-on-black', 'white', $static_url );
 			} else {
-				$replacements = array( $this->settings['express-button-theme'], $logo_color );
+				$replacements = array( $this->settings['express-button-theme'], $logo_color, $static_url );
 			}
 			$button_html = str_replace(
-				array( '[THEME]', '[LOGO_COLOR]' ),
+				array( '[THEME]', '[LOGO_COLOR]', '[STATIC_URL]' ),
 				$replacements,
 				$this->assets['cart_page_express_button']
 			);
@@ -993,14 +994,15 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 		}
 
 		public function get_express_checkout_button_for_block() {
+			$static_url = $this->get_static_url();
 			$logo_color = $this->settings['express-button-theme'] == 'black-on-mint' ? 'black' : 'white';
 			if ( $this->feature_is_available( 'caa' ) ) {
-				$replacements = array( 'white-on-black', 'white' );
+				$replacements = array( 'white-on-black', 'white', $static_url );
 			} else {
-				$replacements = array( $this->settings['express-button-theme'], $logo_color );
+				$replacements = array( $this->settings['express-button-theme'], $logo_color, $static_url );
 			}
 			$button_html = str_replace(
-				array( '[THEME]', '[LOGO_COLOR]' ),
+				array( '[THEME]', '[LOGO_COLOR]', '[STATIC_URL]' ),
 				$replacements,
 				$this->assets['cart_page_express_button']
 			);

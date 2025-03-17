@@ -4,12 +4,12 @@
  * Description: Provide Clearpay as a payment option for WooCommerce orders.
  * Author: Clearpay
  * Author URI: https://www.clearpay.co.uk/
- * Version: 3.8.7
+ * Version: 3.8.8
  * Text Domain: clearpay-gateway-for-woocommerce
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce
  * WC requires at least: 7.4.1
- * WC tested up to: 9.3.3
+ * WC tested up to: 9.7.1
  *
  * Copyright: (c) 2021 Clearpay
  *
@@ -51,7 +51,7 @@ if ( ! class_exists( 'Clearpay_Plugin' ) ) {
 		 *
 		 * @var string
 		 */
-		public static $version = '3.8.7';
+		public static $version = '3.8.8';
 
 		/**
 		 * Import required classes.
