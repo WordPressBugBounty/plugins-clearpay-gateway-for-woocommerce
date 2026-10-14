@@ -383,10 +383,10 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 
 			?>
 				<square-placement
-					data-mpid="<?php echo $this->get_mpid(); ?>"
-					data-currency="<?php echo get_woocommerce_currency(); ?>"
+					data-mpid="<?php echo esc_attr( $this->get_mpid() ); ?>"
+					data-currency="<?php echo esc_attr( get_woocommerce_currency() ); ?>"
 					data-page-type="checkout"
-					data-amount="<?php echo $price; ?>"
+					data-amount="<?php echo esc_attr( $price ); ?>"
 					data-type="logo"
 					data-logo-type="compact-badge"
 					data-platform="WooCommerce"
@@ -462,13 +462,13 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 				?>
 				<div class="error notice">
 					<p>
-						<strong><?php _e( "Clearpay API Error #{$error->code}:", 'woo_clearpay' ); ?></strong>
-						<?php _e( "{$error->message}", 'woo_clearpay' ); ?>
+						<strong><?php printf( esc_html__( 'Clearpay API Error #%s:', 'woo_clearpay' ), esc_html( $error->code ) ); ?></strong>
+						<?php echo esc_html( $error->message ); ?>
 						<?php if ( $error->id ?? false ) : ?>
-							<em><?php _e( "(Error ID: {$error->id})", 'woo_clearpay' ); ?></em>
+							<em><?php printf( esc_html__( '(Error ID: %s)', 'woo_clearpay' ), esc_html( $error->id ) ); ?></em>
 						<?php endif; ?>
 						<?php if ( $show_link ) : ?>
-							<a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=clearpay' ) ); ?>"><?php _e( 'Please check your Clearpay Merchant settings here.', 'woo_clearpay' ); ?></a>
+							<a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=clearpay' ) ); ?>"><?php esc_html_e( 'Please check your Clearpay Merchant settings here.', 'woo_clearpay' ); ?></a>
 						<?php endif; ?>
 					</p>
 				</div>
@@ -487,10 +487,18 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 				<?php
 				return;
 			}
-			if ( isset( $this->settings['clearpay-plugin-version'] ) && $this->settings['clearpay-plugin-version'] !== Clearpay_Plugin::$version ) {
+			// Only nag about a version bump on screens where reviewing settings is actually actionable
+			// (the Plugins list and the WooCommerce settings pages). Previously this fired on every
+			// single wp-admin screen for the lifetime of the site until someone happened to re-save
+			// the gateway settings, which agencies managing many stores reported as a confusing notice
+			// that never went away, even for releases with nothing to configure.
+			$screen             = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+			$is_relevant_screen = $screen && in_array( $screen->id, array( 'plugins', 'woocommerce_page_wc-settings' ), true );
+
+			if ( $is_relevant_screen && isset( $this->settings['clearpay-plugin-version'] ) && $this->settings['clearpay-plugin-version'] !== Clearpay_Plugin::$version ) {
 				?>
 					<div class='updated notice'>
-					<p>Clearpay Gateway for WooCommerce has updated from <?php echo esc_html( $this->settings['clearpay-plugin-version'] ); ?> to <?php echo esc_html( Clearpay_Plugin::$version ); ?>. Please review and re-save your settings 
+					<p>Clearpay Gateway for WooCommerce has updated from <?php echo esc_html( $this->settings['clearpay-plugin-version'] ); ?> to <?php echo esc_html( Clearpay_Plugin::$version ); ?>. You can review your settings
 																					<?php
 																					if ( $show_link ) {
 																						?>
@@ -499,12 +507,13 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 																					} else {
 																						_e( 'below', 'woo_clearpay' );}
 																					?>
-																			.</p>
+																			 if needed.</p>
 					</div>
 					<?php
-			} elseif ( ! isset( $this->settings['clearpay-plugin-version'] ) ) {
+					$this->sync_plugin_version_setting();
+			} elseif ( $is_relevant_screen && ! isset( $this->settings['clearpay-plugin-version'] ) ) {
 				?>
-				<div class='updated notice'><p>Clearpay Gateway for WooCommerce has updated to version <?php echo esc_html( Clearpay_Plugin::$version ); ?>. Please review and re-save your settings 
+				<div class='updated notice'><p>Clearpay Gateway for WooCommerce has updated to version <?php echo esc_html( Clearpay_Plugin::$version ); ?>. You can review your settings
 																													<?php
 																													if ( $show_link ) {
 																														?>
@@ -513,8 +522,9 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 																													} else {
 																														_e( 'below', 'woo_clearpay' );}
 																													?>
-																										.</p></div>
+																										 if needed.</p></div>
 				<?php
+				$this->sync_plugin_version_setting();
 			}
 		}
 
@@ -652,6 +662,13 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 			if ( preg_match( '/subscription/', $product_type ) ) {
 				// Subscription products are not supported by Clearpay.
 				return false;
+			}
+
+			if ( class_exists( 'WC_Subscriptions_Product' ) ) {
+				if ( WC_Subscriptions_Product::is_subscription( $product ) ) {
+					// Products which has metadata as Subscription are not supported by Clearpay.
+					return false;
+				}
 			}
 
 			if ( class_exists( 'WC_Pre_Orders_Product' )
@@ -1199,7 +1216,15 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 						);
 						$message = "Clearpay order token: {$body->token}";
 					} else {
-						wc_add_notice( __( "Sorry, there was a problem preparing your payment. (Error #{$body->httpStatusCode}: {$body->message})", 'woo_clearpay' ), 'error' );
+						wc_add_notice(
+							sprintf(
+								/* translators: 1: HTTP status code, 2: API error message */
+								esc_html__( 'Sorry, there was a problem preparing your payment. (Error #%1$s: %2$s)', 'woo_clearpay' ),
+								esc_html( $body->httpStatusCode ),
+								esc_html( $body->message )
+							),
+							'error'
+						);
 						$message = "API Error #{$body->httpStatusCode} \"{$body->errorCode}\": {$body->message} (Error ID: {$body->errorId})";
 
 						if ( $body->errorCode === 'unsupported_currency' ) {
@@ -1392,6 +1417,16 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 		 * @return  void
 		 */
 		public function reset_settings_api_form_fields() {
+				// Require a valid nonce + manage_woocommerce capability.
+				// The JS that calls this endpoint is enqueued on the gateway settings screen;
+				// pass the nonce via wp_localize_script(), e.g.:
+				//   wp_localize_script( 'clearpay-admin', 'clearpay_settings',
+				//       array( 'nonce' => wp_create_nonce( 'clearpay_settings_action' ) ) );
+				// and send it from JS as part of the AJAX payload (`nonce: clearpay_settings.nonce`).
+				if ( ! check_ajax_referer( 'clearpay_settings_action', 'nonce', false ) || ! current_user_can( 'manage_woocommerce' ) ) {
+						wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+				}
+
 				$clearpay_default_settings = $this->get_form_fields();
 
 				$settings_to_replace = array(
@@ -1428,6 +1463,23 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 
 			$this->settings['clearpay-plugin-version'] = Clearpay_Plugin::$version;
 			return update_option( $this->get_option_key(), $this->settings, 'yes' );
+		}
+
+		/**
+		 * Silently records the current plugin version against the stored settings, without requiring an
+		 * admin to submit the settings form.
+		 *
+		 * WooCommerce renders the settings page's "Save changes" button with the `disabled` attribute by
+		 * default (see html-admin-settings.php), and only enables it once the admin actually edits a
+		 * field. Since a plain version bump usually has nothing for the admin to edit, relying on
+		 * process_admin_options() to record the version left the "plugin updated" notice stuck forever for
+		 * anyone who didn't happen to touch a field.
+		 *
+		 * @uses    update_option()   updates option value
+		 */
+		private function sync_plugin_version_setting() {
+			$this->settings['clearpay-plugin-version'] = Clearpay_Plugin::$version;
+			update_option( $this->get_option_key(), $this->settings, 'yes' );
 		}
 
 		/**
@@ -2140,7 +2192,15 @@ if ( ! class_exists( 'WC_Gateway_Clearpay' ) ) {
 						} else {
 							$message = 'The Clearpay Gateway for WooCommerce plugin cannot communicate with the Clearpay API.';
 						}
-						WC_Admin_Settings::add_error( __( "Clearpay API Error #{$body->httpStatusCode}: {$message} (Error ID: {$body->errorId})", 'woo_clearpay' ) );
+						WC_Admin_Settings::add_error(
+							sprintf(
+								/* translators: 1: HTTP status code, 2: human-readable explanation, 3: API error ID */
+								esc_html__( 'Clearpay API Error #%1$s: %2$s (Error ID: %3$s)', 'woo_clearpay' ),
+								esc_html( $body->httpStatusCode ),
+								esc_html( $message ),
+								esc_html( $body->errorId )
+							)
+						);
 					}
 				}
 				return $body;

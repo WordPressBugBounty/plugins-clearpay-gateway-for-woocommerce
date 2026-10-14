@@ -7,20 +7,70 @@ namespace Composer\Autoload;
 class ComposerStaticInit572a4bc14795e0d1c8f8fa891bdb427c
 {
     public static $prefixLengthsPsr4 = array (
-        'A' => 
+        'A' =>
         array (
             'Afterpay\\SDK\\' => 13,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Afterpay\\SDK\\' => 
+        'Afterpay\\SDK\\' =>
         array (
             0 => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src',
         ),
     );
 
     public static $classMap = array (
+        'Afterpay\\SDK\\Config' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Config.php',
+        'Afterpay\\SDK\\Exception' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Exception.php',
+        'Afterpay\\SDK\\Exception\\InternalException' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Exception/InternalException.php',
+        'Afterpay\\SDK\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Exception/InvalidArgumentException.php',
+        'Afterpay\\SDK\\Exception\\InvalidModelException' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Exception/InvalidModelException.php',
+        'Afterpay\\SDK\\Exception\\NetworkException' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Exception/NetworkException.php',
+        'Afterpay\\SDK\\Exception\\ParsingException' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Exception/ParsingException.php',
+        'Afterpay\\SDK\\Exception\\PrerequisiteNotMetException' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Exception/PrerequisiteNotMetException.php',
+        'Afterpay\\SDK\\HTTP' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP.php',
+        'Afterpay\\SDK\\HTTP\\Request' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request.php',
+        'Afterpay\\SDK\\HTTP\\Request\\CreateCheckout' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request/CreateCheckout.php',
+        'Afterpay\\SDK\\HTTP\\Request\\CreateRefund' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request/CreateRefund.php',
+        'Afterpay\\SDK\\HTTP\\Request\\DeferredPaymentAuth' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request/DeferredPaymentAuth.php',
+        'Afterpay\\SDK\\HTTP\\Request\\DeferredPaymentCapture' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request/DeferredPaymentCapture.php',
+        'Afterpay\\SDK\\HTTP\\Request\\DeferredPaymentVoid' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request/DeferredPaymentVoid.php',
+        'Afterpay\\SDK\\HTTP\\Request\\GetCheckout' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request/GetCheckout.php',
+        'Afterpay\\SDK\\HTTP\\Request\\GetConfiguration' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request/GetConfiguration.php',
+        'Afterpay\\SDK\\HTTP\\Request\\GetPaymentByOrderId' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request/GetPaymentByOrderId.php',
+        'Afterpay\\SDK\\HTTP\\Request\\GetPaymentByToken' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request/GetPaymentByToken.php',
+        'Afterpay\\SDK\\HTTP\\Request\\ImmediatePaymentCapture' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request/ImmediatePaymentCapture.php',
+        'Afterpay\\SDK\\HTTP\\Request\\ListPayments' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request/ListPayments.php',
+        'Afterpay\\SDK\\HTTP\\Request\\Ping' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request/Ping.php',
+        'Afterpay\\SDK\\HTTP\\Request\\ReversePaymentByToken' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request/ReversePaymentByToken.php',
+        'Afterpay\\SDK\\HTTP\\Request\\UpdatePaymentByOrderId' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request/UpdatePaymentByOrderId.php',
+        'Afterpay\\SDK\\HTTP\\Request\\UpdateShippingCourier' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Request/UpdateShippingCourier.php',
+        'Afterpay\\SDK\\HTTP\\Response' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Response.php',
+        'Afterpay\\SDK\\HTTP\\Response\\CreateCheckout' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Response/CreateCheckout.php',
+        'Afterpay\\SDK\\HTTP\\Response\\DeferredPaymentAuth' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Response/DeferredPaymentAuth.php',
+        'Afterpay\\SDK\\HTTP\\Response\\DeferredPaymentCapture' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Response/DeferredPaymentCapture.php',
+        'Afterpay\\SDK\\HTTP\\Response\\DeferredPaymentVoid' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Response/DeferredPaymentVoid.php',
+        'Afterpay\\SDK\\HTTP\\Response\\ImmediatePaymentCapture' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Response/ImmediatePaymentCapture.php',
+        'Afterpay\\SDK\\HTTP\\Response\\Ping' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/HTTP/Response/Ping.php',
+        'Afterpay\\SDK\\Helper\\ArrayHelper' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Helper/ArrayHelper.php',
+        'Afterpay\\SDK\\Helper\\StringHelper' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Helper/StringHelper.php',
+        'Afterpay\\SDK\\Helper\\UrlHelper' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Helper/UrlHelper.php',
+        'Afterpay\\SDK\\MerchantAccount' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/MerchantAccount.php',
+        'Afterpay\\SDK\\Model' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Model.php',
+        'Afterpay\\SDK\\Model\\Consumer' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Model/Consumer.php',
+        'Afterpay\\SDK\\Model\\Contact' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Model/Contact.php',
+        'Afterpay\\SDK\\Model\\Discount' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Model/Discount.php',
+        'Afterpay\\SDK\\Model\\Item' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Model/Item.php',
+        'Afterpay\\SDK\\Model\\Merchant' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Model/Merchant.php',
+        'Afterpay\\SDK\\Model\\Money' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Model/Money.php',
+        'Afterpay\\SDK\\Model\\OrderDetails' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Model/OrderDetails.php',
+        'Afterpay\\SDK\\Model\\Payment' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Model/Payment.php',
+        'Afterpay\\SDK\\Model\\PaymentEvent' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Model/PaymentEvent.php',
+        'Afterpay\\SDK\\Model\\Refund' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Model/Refund.php',
+        'Afterpay\\SDK\\Model\\ShippingCourier' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Model/ShippingCourier.php',
+        'Afterpay\\SDK\\PersistentStorage' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/PersistentStorage.php',
+        'Afterpay\\SDK\\Shared\\ModelMethods' => __DIR__ . '/..' . '/afterpay-global/afterpay-sdk-php/src/Shared/ModelMethods.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 

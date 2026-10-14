@@ -2,8 +2,8 @@
 Contributors: clearpayit
 Tags: woocommerce, clearpay
 Requires at least: 6.0.3
-Tested up to: 6.7.2
-Stable tag: 3.8.8
+Tested up to: 7.0.4
+Stable tag: 3.9.0
 License: GNU Public License
 License URI: https://www.gnu.org/licenses/
 
@@ -38,6 +38,13 @@ This section outlines the steps to install the Clearpay plugin.
 Please refer to the [User Guide](https://developers.clearpay.co.uk/clearpay-online/docs/woocommerce-pre-integration-checks). Most common questions are answered in the [FAQ](https://developers.clearpay.co.uk/clearpay-online/docs/woocommerce-frequently-asked-questions). There is also the option to create a support ticket in the official [Clearpay Help Centre](https://help.clearpay.co.uk/hc) if necessary.
 
 == Changelog ==
+= 3.9.0 =
+*Release Date: Wednesday, 14 Oct 2026*
+
+* Tested and verified support for WordPress 7.0.4 and WooCommerce 11.0.0.
+* Improved compatibility with WooCommerce Subscriptions. Afterpay is no longer offered for products with a subscription plan.
+* Security improvements.
+* Minor improvements.
 
 = 3.8.8 =
 *Release Date: Monday, 17 Mar 2025*
